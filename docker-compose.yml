@@ -1,0 +1,15 @@
+networks:
+  cms-network:
+    driver: bridge
+  tick-network:
+    driver: bridge
+
+volumes:
+  data_opencart-3:
+  data_influxdb:
+  data_chronograf:
+  data_kapacitor:
+
+include:
+  - ./prod/docker-cms-compose.yml
+  - ./prod/docker-tick-compose.yml

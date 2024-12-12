@@ -1,0 +1,56 @@
+services:
+  telegraf:
+    image: telegraf:${TELEGRAF_VERSION}
+    volumes:
+      - ./TICK-1/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    depends_on:
+      - influxdb
+    networks:
+      - tick-network
+    restart: always
+
+  influxdb:
+    image: influxdb:${INFLUXDB_VERSION}
+    volumes:
+      - ./TICK-1/influxdb.conf:/etc/influxdb/influxdb.conf:ro
+      - data_influxdb:/var/lib/influxdb:rw
+    ports:
+      - "8086:8086"
+      - "8082:8082"
+    networks:
+      - tick-network
+    restart: always
+
+  chronograf:
+    image: chronograf:${CHRONOGRAF_VERSION}
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_USERNAME=admin
+      - INFLUXDB_PASSWORD=admin
+      - KAPACITOR_URL=http://kapacitor:9092
+      - KAPACITOR_USERNAME=admin
+      - KAPACITOR_PASSWORD=admin
+    volumes:
+      - data_chronograf:/var/lib/chronograf:rw
+    ports:
+      - "8888:8888"
+    networks:
+      - tick-network
+    depends_on:
+      - kapacitor
+      - influxdb
+      - telegraf
+    restart: always
+
+  kapacitor:
+    image: kapacitor:${KAPACITOR_VERSION}
+    volumes:
+      - ./TICK-1/kapacitor.conf:/etc/kapacitor/kapacitor.conf:ro
+      - data_kapacitor:/var/lib/kapacitor:rw
+    depends_on:
+      - influxdb
+    ports:
+      - "9092:9092"
+    networks:
+      - tick-network
+    restart: always
