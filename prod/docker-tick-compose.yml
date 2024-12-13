@@ -27,9 +27,8 @@ services:
       - V1_AUTH_USERNAME=v1-user
       - V1_AUTH_PASSWORD=v1-password
     volumes:
-      - ../TICK-1/influxdb2.conf:/etc/influxdb2/config.toml:ro
       - data_influxdb2:/var/lib/influxdb2:rw
-      - ../scripts:/docker-entrypoint-initdb.d
+      - ../scripts:/docker-entrypoint-initdb.d:rwx
     ports:
       - "8086:8086"
       - "8082:8082"
@@ -41,8 +40,9 @@ services:
     image: chronograf:1.9.4
     environment:
       - INFLUXDB_URL=http://influxdb:8086
-      - INFLUXDB_USERNAME=admin
-      - INFLUXDB_PASSWORD=qwerty123
+      - INFLUXDB_USERNAME=v1-user
+      - INFLUXDB_PASSWORD=v1-password
+      - INFLUXDB_ORG=hw-org
       - INFLUXDB_TOKEN=${DOCKER_INFLUX_TOKEN}
       - KAPACITOR_URL=http://kapacitor:9092
     volumes:
@@ -59,6 +59,8 @@ services:
 
   kapacitor:
     image: kapacitor:1.7.6
+    environment:
+      - INFLUX_TOKEN=${DOCKER_INFLUX_TOKEN}
     volumes:
       - ../TICK-1/kapacitor.conf:/etc/kapacitor/kapacitor.conf:ro
       - data_kapacitor:/var/lib/kapacitor:rw
