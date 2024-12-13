@@ -1,19 +1,35 @@
 services:
   telegraf:
-    image: telegraf:${TELEGRAF_VERSION}
+    image: telegraf:1.33.0
+    environment:
+      - INFLUX_TOKEN=${DOCKER_INFLUX_TOKEN}
     volumes:
-      - ./TICK-1/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - ../TICK-1/telegraf.conf:/etc/telegraf/telegraf.conf:ro
     depends_on:
       - influxdb
     networks:
+      - cms-network
       - tick-network
     restart: always
 
   influxdb:
-    image: influxdb:${INFLUXDB_VERSION}
+    image: influxdb:2.7.11
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=qwerty123
+      - DOCKER_INFLUXDB_INIT_ORG=hw-org
+      - DOCKER_INFLUXDB_INIT_BUCKET=hw-bucket
+      - DOCKER_INFLUXDB_INIT_RETENTION=1w
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUX_TOKEN}
+      - V1_DB_NAME=v1-db
+      - V1_RP_NAME=v1-rp
+      - V1_AUTH_USERNAME=v1-user
+      - V1_AUTH_PASSWORD=v1-password
     volumes:
-      - ./TICK-1/influxdb.conf:/etc/influxdb/influxdb.conf:ro
-      - data_influxdb:/var/lib/influxdb:rw
+      - ../TICK-1/influxdb2.conf:/etc/influxdb2/config.toml:ro
+      - data_influxdb2:/var/lib/influxdb2:rw
+      - ../scripts:/docker-entrypoint-initdb.d
     ports:
       - "8086:8086"
       - "8082:8082"
@@ -22,14 +38,13 @@ services:
     restart: always
 
   chronograf:
-    image: chronograf:${CHRONOGRAF_VERSION}
+    image: chronograf:1.9.4
     environment:
       - INFLUXDB_URL=http://influxdb:8086
       - INFLUXDB_USERNAME=admin
-      - INFLUXDB_PASSWORD=admin
+      - INFLUXDB_PASSWORD=qwerty123
+      - INFLUXDB_TOKEN=${DOCKER_INFLUX_TOKEN}
       - KAPACITOR_URL=http://kapacitor:9092
-      - KAPACITOR_USERNAME=admin
-      - KAPACITOR_PASSWORD=admin
     volumes:
       - data_chronograf:/var/lib/chronograf:rw
     ports:
@@ -43,9 +58,9 @@ services:
     restart: always
 
   kapacitor:
-    image: kapacitor:${KAPACITOR_VERSION}
+    image: kapacitor:1.7.6
     volumes:
-      - ./TICK-1/kapacitor.conf:/etc/kapacitor/kapacitor.conf:ro
+      - ../TICK-1/kapacitor.conf:/etc/kapacitor/kapacitor.conf:ro
       - data_kapacitor:/var/lib/kapacitor:rw
     depends_on:
       - influxdb

@@ -6,7 +6,7 @@ networks:
 
 volumes:
   data_opencart-3:
-  data_influxdb:
+  data_influxdb2:
   data_chronograf:
   data_kapacitor:
 
