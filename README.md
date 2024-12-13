@@ -7,5 +7,4 @@
 * opencart-my-store - Web Store UI
 * opencart-my-store/admin - Admin UI
 * http://localhost:8086 - InfluxDB UI (admin/qwerty123)
-* http://localhost:9092 - Kapacitor UI
 * http://localhost:8888 - Chronograf
