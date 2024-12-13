@@ -22,7 +22,7 @@ services:
       - DOCKER_INFLUXDB_INIT_BUCKET=hw-bucket
       - DOCKER_INFLUXDB_INIT_RETENTION=1w
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUX_TOKEN}
-      - V1_DB_NAME=v1-db
+      - V1_DB_NAME=telegraf
       - V1_RP_NAME=v1-rp
       - V1_AUTH_USERNAME=v1-user
       - V1_AUTH_PASSWORD=v1-password
