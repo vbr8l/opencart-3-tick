@@ -18,17 +18,12 @@ services:
       - DOCKER_INFLUXDB_INIT_MODE=setup
       - DOCKER_INFLUXDB_INIT_USERNAME=admin
       - DOCKER_INFLUXDB_INIT_PASSWORD=qwerty123
-      - DOCKER_INFLUXDB_INIT_ORG=hw-org
-      - DOCKER_INFLUXDB_INIT_BUCKET=hw-bucket
+      - DOCKER_INFLUXDB_INIT_ORG=HW
+      - DOCKER_INFLUXDB_INIT_BUCKET=telegraf
       - DOCKER_INFLUXDB_INIT_RETENTION=1w
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUX_TOKEN}
-      - V1_DB_NAME=telegraf
-      - V1_RP_NAME=v1-rp
-      - V1_AUTH_USERNAME=v1-user
-      - V1_AUTH_PASSWORD=v1-password
     volumes:
       - data_influxdb2:/var/lib/influxdb2:rw
-      - ../scripts:/docker-entrypoint-initdb.d:rwx
     ports:
       - "8086:8086"
       - "8082:8082"
@@ -40,9 +35,7 @@ services:
     image: chronograf:1.9.4
     environment:
       - INFLUXDB_URL=http://influxdb:8086
-      - INFLUXDB_USERNAME=v1-user
-      - INFLUXDB_PASSWORD=v1-password
-      - INFLUXDB_ORG=hw-org
+      - INFLUXDB_ORG=HW
       - INFLUXDB_TOKEN=${DOCKER_INFLUX_TOKEN}
       - KAPACITOR_URL=http://kapacitor:9092
     volumes:
